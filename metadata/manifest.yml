@@ -1,12 +1,13 @@
 Name: wildfly
 Cartridge-Short-Name: WILDFLY
-Display-Name: WildFly Application Server 8.1.0.Final
+Display-Name: WildFly Application Server 9.0.0.Alpha1
 Description: "The leading open source Java EE7 application server for enterprise Java applications. Popular development frameworks include Seam, CDI, Weld, and Spring."
-Version: '8'
+Version: '9'
+Source-Url: https://github.com/openshift-cartridges/openshift-wildfly-cartridge/archive/wildfly-9.zip
 License: LGPL
 License-Url: http://www.gnu.org/copyleft/lesser.txt
 Vendor: WildFly
-Cartridge-Version: '0.0.5'
+Cartridge-Version: '0.0.6'
 Cartridge-Vendor: wildfly
 Categories:
   - service
@@ -49,7 +50,7 @@ Cart-Data:
     Type: environment
     Description: "Unique ID which identified the gear. This value changes between gears."
 Provides:
-  - wildfly-8
+  - wildfly-9
   - "wildfly"
   - wildfly-standalone
 Publishes:

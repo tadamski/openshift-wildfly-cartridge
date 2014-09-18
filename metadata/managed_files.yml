@@ -1,6 +1,6 @@
 ---
 snapshot_exclusions:
-- ~/wildfly/versions/8
+- ~/wildfly/versions/9
 - ~/wildfly/modules
 - ~/wildfly/usr/lib/jvm
 locked_files:
