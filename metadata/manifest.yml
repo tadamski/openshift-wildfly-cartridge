@@ -3,6 +3,9 @@ Cartridge-Short-Name: WILDFLY
 Display-Name: WildFly Application Server 8.1.0.Final
 Description: "The leading open source Java EE7 application server for enterprise Java applications. Popular development frameworks include Seam, CDI, Weld, and Spring."
 Version: '8'
+Versions:
+- '8'
+- '9'
 License: LGPL
 License-Url: http://www.gnu.org/copyleft/lesser.txt
 Vendor: WildFly
@@ -52,6 +55,7 @@ Provides:
   - wildfly-8
   - "wildfly"
   - wildfly-standalone
+  - "wildfly(version) = 8"
 Publishes:
   publish-http-url:
     Type: "NET_TCP:httpd-proxy-info"
@@ -103,3 +107,11 @@ Endpoints:
     Private-Port: 9990
 Additional-Control-Actions:
     - threaddump
+Version-Overrides:
+  '9':
+    Display-Name: WildFly Application Server 9.0.0.Alpha1
+    Provides:
+    - wildfly-9
+    - "wildfly"
+    - wildfly-standalone
+    - "wildfly(version) = 9"
