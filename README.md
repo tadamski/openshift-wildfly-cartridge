@@ -1,6 +1,6 @@
 # OpenShift WildFly Cartridge
 
-This cartridge is running WildFly 8.1.0.Final
+This cartridge is running WildFly 8.1.0.Final. To run WildFly 9.0.0.Alpha1 instead, take a look at the documentation [here](https://github.com/openshift-cartridges/openshift-wildfly-cartridge/tree/wildfly-9).
 
 This cartridge is based on the JBoss AS cartridge found in OpenShift Origin [here](https://github.com/openshift/origin-server/tree/master/cartridges/openshift-origin-cartridge-jbossas).  
 
@@ -12,11 +12,11 @@ This cartridge will act very similarly to the jbossas-7 cartridge that you can c
 You should be able to modify the code in the /src directory of the git repository, and do a git add, git commit, and git push and have it deployed as ROOT.war.  
 You can also remove the pom.xml and /src directories and place a war file in the deployments directory and they should deploy like they do on JBoss AS 7  
 
-### Create a new WildFly app
+### Create a new WildFly 8 app
 
 There are a few ways to get started quickly on OpenShift. To create a new WildFly app using the OpenShift Web Console, click on "Deploy Now" [here](https://www.openshift.com/quickstarts/wildfly-8). If you'd like to use the OpenShift [command line tools](https://www.openshift.com/get-started) instead, the following command can be used:
 
-	rhc app create wildfly https://cartreflect-claytondev.rhcloud.com/reflect?github=openshift-cartridges/openshift-wildfly-cartridge
+	rhc app create wildfly https://raw.githubusercontent.com/openshift-cartridges/openshift-wildfly-cartridge/wildfly-8/metadata/manifest.yml
 	
 It will take a few minutes to build, so be patient.
 
@@ -40,7 +40,7 @@ This cartridge provides an OpenShift compatible wrapper of the JBoss CLI tool on
 
         jboss-cli.sh -c --controller=$OPENSHIFT_WILDFLY_IP:$OPENSHIFT_WILDFLY_MANAGEMENT_HTTP_PORT
 
-###Super Secret Hint (Don't tell anyone)
+### Super Secret Hint (Don't tell anyone)
 
 If you run the rhc port-forward command, you can access the WildFly management interface on port 9990.  
 A username and password is created when you install this cartridge.  
