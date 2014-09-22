@@ -14,11 +14,13 @@ You can also remove the pom.xml and /src directories and place a war file in the
 
 ### Create a new WildFly 9 app
 
-To create a new WildFly app using the OpenShift [command line tools](https://www.openshift.com/get-started), the following command can be used:
+The following command can be used to create a new WildFly 9 app using the OpenShift [command line tools](https://www.openshift.com/get-started):
 
 	rhc app create wildfly https://raw.githubusercontent.com/openshift-cartridges/openshift-wildfly-cartridge/wildfly-9/metadata/manifest.yml
 	
 It will take a few minutes to build, so be patient.
+
+**NOTE:** It will soon be possible to create a WildFly 9 app using the OpenShift Web Console as well. Stay tuned for that.
 
 ### JBoss CLI
 
