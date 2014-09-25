@@ -6,9 +6,9 @@ Version: '9'
 Source-Url: https://github.com/openshift-cartridges/openshift-wildfly-cartridge/archive/wildfly-9.zip
 License: LGPL
 License-Url: http://www.gnu.org/copyleft/lesser.txt
-Vendor: WildFly
+Vendor: JBoss
 Cartridge-Version: '0.0.6'
-Cartridge-Vendor: wildfly
+Cartridge-Vendor: jboss
 Categories:
   - service
   - web_framework
