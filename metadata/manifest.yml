@@ -1,7 +1,7 @@
 Name: wildfly
 Cartridge-Short-Name: WILDFLY
 Display-Name: WildFly Application Server 9.0.0.Alpha1
-Description: "The leading open source Java EE7 application server for enterprise Java applications. Popular development frameworks include Seam, CDI, Weld, and Spring."
+Description: "The leading open source Java EE7 application server for enterprise Java applications. Popular development frameworks include CDI, DeltaSpike and Spring."
 Version: '9'
 Source-Url: https://github.com/openshift-cartridges/openshift-wildfly-cartridge/archive/wildfly-9.zip
 License: LGPL
