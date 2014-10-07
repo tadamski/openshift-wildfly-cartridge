@@ -16,9 +16,14 @@ You can also remove the pom.xml and /src directories and place a war file in the
 
 There are a few ways to get started quickly on OpenShift. To create a new WildFly app using the OpenShift Web Console, click on "Deploy Now" [here](https://www.openshift.com/quickstarts/wildfly-8). If you'd like to use the OpenShift [command line tools](https://www.openshift.com/get-started) instead, the following command can be used:
 
-	rhc app create wildfly https://raw.githubusercontent.com/openshift-cartridges/openshift-wildfly-cartridge/wildfly-8/metadata/manifest.yml
+	rhc app create wildfly -s https://raw.githubusercontent.com/openshift-cartridges/openshift-wildfly-cartridge/wildfly-8/metadata/manifest.yml
 	
 It will take a few minutes to build, so be patient.
+
+We recommend to create a scalable application as the Wildfly cartridge might
+consume more storage on the free plans. With scalable application, the
+additional cartridge, such as database, etc... will be created as a separate
+gears.
 
 ### Create a new WildFly app based on an existing app
 
