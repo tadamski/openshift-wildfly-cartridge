@@ -20,9 +20,8 @@ There are a few ways to get started quickly on OpenShift. To create a new WildFl
 	
 It will take a few minutes to build, so be patient.
 
-We recommend to create a scalable application as the Wildfly cartridge might
-consume more storage on the free plans. With scalable application, the
-additional cartridge, such as database, etc... will be created as a separate
+We recommend to create a scalable application since the WildFly cartridge might
+consume more storage on free plans. With a scalable application, any additional cartridges, such as a database cartridge, will be installed on separate
 gears.
 
 ### Create a new WildFly app based on an existing app
