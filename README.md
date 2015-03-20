@@ -62,6 +62,21 @@ Adding marker files to `.openshift/markers` will have the following effects:
 
 New WildFly apps will default to using Java 8.
 
+### Troubleshooting
+
+**Q:** Can the following error that sometimes occurs on startup be ignored? My app deploys fine even when this error occurs in the server log file.
+
+
+```
+ERROR [org.jboss.as.controller.management-operation] 
+(management-handler-thread - 4) JBAS014613: Operation ("read-resource") 
+failed - address: ([("subsystem" => "deployment-scanner")]) - failure 
+description: "JBAS014807: Management resource '[(\"subsystem\" => 
+\"deployment-scanner\")]' not found"
+```
+
+**A:**  Yes, this error can safely be ignored. It just indicates that the deployment scanner wasn't yet available when the cartridge attempted to check if your app was deployed. Your app will still get deployed successfully. 
+
 ### Thanks to the following:
 Stian Thorgersen for this blog article that helped get this going!
 https://community.jboss.org/people/stianst/blog/2013/06/13/run-wildfly-on-openshift-using-the-diy-cartridge
