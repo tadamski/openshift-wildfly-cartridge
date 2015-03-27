@@ -32,7 +32,7 @@
     </exports>
 
     <resources>
-        <resource-root path="wildfly-xts-9.0.0.Alpha1.jar"/>
+        <resource-root path="wildfly-xts-9.0.0.Beta1.jar"/>
     </resources>
 
     <dependencies>
@@ -69,6 +69,6 @@
         <module name="org.jboss.invocation"/>
         <module name="org.jboss.as.naming"/>
         <module name="org.jboss.as.web-common"/>
-        <module name="org.jboss.narayana.txframework" />
+        <module name="org.jboss.narayana.compensations" />
     </dependencies>
 </module>

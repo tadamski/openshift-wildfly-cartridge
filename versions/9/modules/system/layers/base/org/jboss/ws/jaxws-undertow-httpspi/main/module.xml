@@ -29,7 +29,7 @@
     </properties>
 
     <resources>
-        <resource-root path="jaxws-undertow-httpspi-1.0.1.Beta1.jar"/>
+        <resource-root path="jaxws-undertow-httpspi-1.0.1.Final.jar"/>
     </resources>
 
     <dependencies>

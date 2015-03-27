@@ -28,7 +28,7 @@
     </properties>
 
     <resources>
-        <resource-root path="wildfly-mod_cluster-extension-9.0.0.Alpha1.jar"/>
+        <resource-root path="wildfly-mod_cluster-extension-9.0.0.Beta1.jar"/>
     </resources>
 
     <dependencies>
@@ -36,12 +36,12 @@
         <module name="org.jboss.as.clustering.common"/>
         <module name="org.jboss.as.controller"/>
         <module name="org.jboss.as.network"/>
-        <module name="org.jboss.common-core"/>
         <module name="org.jboss.logging"/>
         <module name="org.jboss.mod_cluster.container.spi"/>
         <module name="org.jboss.mod_cluster.core"/>
         <module name="org.jboss.msc"/>
         <module name="org.jboss.staxmapper"/>
+        <module name="org.wildfly.clustering.service"/>
         <module name="org.wildfly.mod_cluster.undertow" services="import" optional="true"/>
     </dependencies>
 </module>

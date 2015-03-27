@@ -28,7 +28,7 @@
     </properties>
 
     <resources>
-        <resource-root path="wildfly-clustering-web-spi-9.0.0.Alpha1.jar"/>
+        <resource-root path="wildfly-clustering-web-spi-9.0.0.Beta1.jar"/>
     </resources>
 
     <dependencies>
@@ -40,6 +40,7 @@
         <module name="org.jboss.modules"/>
         <module name="org.jboss.msc"/>
         <module name="org.wildfly.clustering.ee.spi"/>
+        <module name="org.wildfly.clustering.service"/>
         <module name="org.wildfly.clustering.web.infinispan" services="import"/>
     </dependencies>
 </module>

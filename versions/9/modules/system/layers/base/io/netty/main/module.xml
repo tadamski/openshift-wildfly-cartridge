@@ -28,5 +28,8 @@
     </resources>
 
     <dependencies>
+        <module name="javax.api"/>
+        <module name="sun.jdk"/>
+        <module name="org.javassist" optional="true"/>
     </dependencies>
 </module>

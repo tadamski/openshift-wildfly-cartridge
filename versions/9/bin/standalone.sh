@@ -16,15 +16,20 @@ do
           shift
           if [ -n "$1" ] && [ "${1#*-}" = "$1" ]; then
               DEBUG_PORT=$1
-          else
-              SERVER_OPTS="$SERVER_OPTS \"$1\""
           fi
+          ;;
+      -Djava.security.manager*)
+          echo "ERROR: The use of -Djava.security.manager has been removed. Please use the -secmgr command line argument or SECMGR=true environment variable."
+          exit 1
+          ;;
+      -secmgr)
+          SECMGR="true"
           ;;
       --)
           shift
           break;;
       *)
-          SERVER_OPTS="$SERVER_OPTS \"$1\""
+          SERVER_OPTS="$SERVER_OPTS '$1'"
           ;;
     esac
     shift
@@ -43,7 +48,7 @@ darwin=false;
 linux=false;
 solaris=false;
 freebsd=false;
-
+other=false
 case "`uname`" in
     CYGWIN*)
         cygwin=true
@@ -61,15 +66,10 @@ case "`uname`" in
     SunOS*)
         solaris=true
         ;;
+    *)
+        other=true
+        ;;
 esac
-
-# Read an optional running configuration file
-if [ "x$RUN_CONF" = "x" ]; then
-    RUN_CONF="$DIRNAME/standalone.conf"
-fi
-if [ -r "$RUN_CONF" ]; then
-    . "$RUN_CONF"
-fi
 
 # For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin ; then
@@ -98,6 +98,14 @@ else
  fi
 fi
 export JBOSS_HOME
+
+# Read an optional running configuration file
+if [ "x$RUN_CONF" = "x" ]; then
+    RUN_CONF="$DIRNAME/standalone.conf"
+fi
+if [ -r "$RUN_CONF" ]; then
+    . "$RUN_CONF"
+fi
 
 # Set debug settings if not already set
 if [ "$DEBUG_MODE" = "true" ]; then
@@ -163,14 +171,14 @@ if [ "x$JBOSS_MODULEPATH" = "x" ]; then
     JBOSS_MODULEPATH="$JBOSS_HOME/modules"
 fi
 
-if $linux || $solaris; then
+if $linux; then
     # consolidate the server and command line opts
     CONSOLIDATED_OPTS="$JAVA_OPTS $SERVER_OPTS"
     # process the standalone options
     for var in $CONSOLIDATED_OPTS
     do
        # Remove quotes
-       p=`echo $var | tr -d '"'`
+       p=`echo $var | tr -d "'"`
        case $p in
          -Djboss.server.base.dir=*)
               JBOSS_BASE_DIR=`readlink -m ${p#*=}`
@@ -185,15 +193,37 @@ if $linux || $solaris; then
     done
 fi
 
-# No readlink -m on BSD
-if $darwin || $freebsd; then
+if $solaris; then
     # consolidate the server and command line opts
     CONSOLIDATED_OPTS="$JAVA_OPTS $SERVER_OPTS"
     # process the standalone options
     for var in $CONSOLIDATED_OPTS
     do
        # Remove quotes
-       p=`echo $var | tr -d '"'`
+       p=`echo $var | tr -d "'"`
+      case $p in
+        -Djboss.server.base.dir=*)
+             JBOSS_BASE_DIR=`echo $p | awk -F= '{print $2}'`
+             ;;
+        -Djboss.server.log.dir=*)
+             JBOSS_LOG_DIR=`echo $p | awk -F= '{print $2}'`
+             ;;
+        -Djboss.server.config.dir=*)
+             JBOSS_CONFIG_DIR=`echo $p | awk -F= '{print $2}'`
+             ;;
+      esac
+    done
+fi
+
+# No readlink -m on BSD
+if $darwin || $freebsd || $other ; then
+    # consolidate the server and command line opts
+    CONSOLIDATED_OPTS="$JAVA_OPTS $SERVER_OPTS"
+    # process the standalone options
+    for var in $CONSOLIDATED_OPTS
+    do
+       # Remove quotes
+       p=`echo $var | tr -d "'"`
        case $p in
          -Djboss.server.base.dir=*)
               JBOSS_BASE_DIR=`cd ${p#*=} ; pwd -P`
@@ -273,7 +303,7 @@ if [ "$PRESERVE_JAVA_OPTS" != "true" ]; then
         #mv "$JBOSS_LOG_DIR/gc.log.3" "$JBOSS_LOG_DIR/backupgc.log.3" >/dev/null 2>&1
         #mv "$JBOSS_LOG_DIR/gc.log.4" "$JBOSS_LOG_DIR/backupgc.log.4" >/dev/null 2>&1
         #mv "$JBOSS_LOG_DIR/gc.log.*.current" "$JBOSS_LOG_DIR/backupgc.log.current" >/dev/null 2>&1
-        #"$JAVA" $JVM_OPTVERSION -verbose:gc -Xloggc:"$JBOSS_LOG_DIR/gc.log" -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=3M -XX:-TraceClassUnloading -version >/dev/null 2>&1 && mkdir -p $JBOSS_LOG_DIR && PREPEND_JAVA_OPTS="$PREPEND_JAVA_OPTS -verbose:gc -Xloggc:\"$JBOSS_LOG_DIR/gc.log\" -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=3M -XX:-TraceClassUnloading" 
+        #"$JAVA" $JVM_OPTVERSION -verbose:gc -Xloggc:"$JBOSS_LOG_DIR/gc.log" -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=3M -XX:-TraceClassUnloading -version >/dev/null 2>&1 && mkdir -p $JBOSS_LOG_DIR && PREPEND_JAVA_OPTS="$PREPEND_JAVA_OPTS -verbose:gc -Xloggc:\"$JBOSS_LOG_DIR/gc.log\" -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=3M -XX:-TraceClassUnloading"
     #fi
 
     JAVA_OPTS="$PREPEND_JAVA_OPTS $JAVA_OPTS"
@@ -281,6 +311,19 @@ fi
 
 if [ "x$JBOSS_MODULEPATH" = "x" ]; then
     JBOSS_MODULEPATH="$JBOSS_HOME/modules"
+fi
+
+# Process the JAVA_OPTS and fail the script of a java.security.manager was found
+SECURITY_MANAGER_SET=`echo $JAVA_OPTS | $GREP "java\.security\.manager"`
+if [ "x$SECURITY_MANAGER_SET" != "x" ]; then
+    echo "ERROR: The use of -Djava.security.manager has been removed. Please use the -secmgr command line argument or SECMGR=true environment variable."
+    exit 1
+fi
+
+# Set up the module arguments
+MODULE_OPTS=""
+if [ "$SECMGR" = "true" ]; then
+    MODULE_OPTS="$MODULE_OPTS -secmgr";
 fi
 
 # Display our environment
@@ -301,25 +344,27 @@ while true; do
    if [ "x$LAUNCH_JBOSS_IN_BACKGROUND" = "x" ]; then
       # Execute the JVM in the foreground
       eval \"$JAVA\" -D\"[Standalone]\" $JAVA_OPTS \
-         \"-Dorg.jboss.boot.log.file=$JBOSS_LOG_DIR/server.log\" \
-         \"-Dlogging.configuration=file:$JBOSS_CONFIG_DIR/logging.properties\" \
-         -jar \"$JBOSS_HOME/jboss-modules.jar\" \
-         -mp \"${JBOSS_MODULEPATH}\" \
+         \"-Dorg.jboss.boot.log.file="$JBOSS_LOG_DIR"/server.log\" \
+         \"-Dlogging.configuration=file:"$JBOSS_CONFIG_DIR"/logging.properties\" \
+         -jar \""$JBOSS_HOME"/jboss-modules.jar\" \
+         $MODULE_OPTS \
+         -mp \""${JBOSS_MODULEPATH}"\" \
          org.jboss.as.standalone \
-         -Djboss.home.dir=\"$JBOSS_HOME\" \
-         -Djboss.server.base.dir=\"$JBOSS_BASE_DIR\" \
+         -Djboss.home.dir=\""$JBOSS_HOME"\" \
+         -Djboss.server.base.dir=\""$JBOSS_BASE_DIR"\" \
          "$SERVER_OPTS"
       JBOSS_STATUS=$?
    else
       # Execute the JVM in the background
       eval \"$JAVA\" -D\"[Standalone]\" $JAVA_OPTS \
-         \"-Dorg.jboss.boot.log.file=$JBOSS_LOG_DIR/server.log\" \
-         \"-Dlogging.configuration=file:$JBOSS_CONFIG_DIR/logging.properties\" \
-         -jar \"$JBOSS_HOME/jboss-modules.jar\" \
-         -mp \"${JBOSS_MODULEPATH}\" \
+         \"-Dorg.jboss.boot.log.file="$JBOSS_LOG_DIR"/server.log\" \
+         \"-Dlogging.configuration=file:"$JBOSS_CONFIG_DIR"/logging.properties\" \
+         -jar \""$JBOSS_HOME"/jboss-modules.jar\" \
+         $MODULE_OPTS \
+         -mp \""${JBOSS_MODULEPATH}"\" \
          org.jboss.as.standalone \
-         -Djboss.home.dir=\"$JBOSS_HOME\" \
-         -Djboss.server.base.dir=\"$JBOSS_BASE_DIR\" \
+         -Djboss.home.dir=\""$JBOSS_HOME"\" \
+         -Djboss.server.base.dir=\""$JBOSS_BASE_DIR"\" \
          "$SERVER_OPTS" "&"
       JBOSS_PID=$!
       # Trap common signals and relay them to the jboss process

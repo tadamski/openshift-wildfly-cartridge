@@ -35,7 +35,7 @@
     <main-class name="org.jboss.as.appclient.subsystem.Main"/>
 
     <resources>
-        <resource-root path="wildfly-appclient-9.0.0.Alpha1.jar"/>
+        <resource-root path="wildfly-appclient-9.0.0.Beta1.jar"/>
     </resources>
 
     <dependencies>
@@ -71,7 +71,7 @@
         <module name="org.jboss.as.protocol"/>
         <module name="org.jboss.as.remoting"/>
         <module name="org.jboss.as.security"/>
-        <module name="org.wildfly.security.manager"/>
+        <module name="org.wildfly.security.manager" services="import"/>
         <module name="org.jboss.as.version"/>
         <module name="org.picketbox"/>
         <module name="org.jboss.metadata.common"/>

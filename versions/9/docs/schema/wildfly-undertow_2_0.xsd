@@ -43,7 +43,7 @@
         <xs:sequence>
             <xs:element name="buffer-cache" type="buffer-cacheType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="server" type="serverType" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:element name="servlet-container" type="servletContainerType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="servlet-container" type="servletContainerType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="handlers" type="handlerType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="filters" type="filterType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
@@ -51,12 +51,17 @@
         <xs:attribute name="default-virtual-host" type="xs:string" default="default-host"/>
         <xs:attribute name="default-servlet-container" type="xs:string" default="default"/>
         <xs:attribute name="instance-id" type="xs:string" use="optional"/>
+        <xs:attribute name="statistics-enabled" type="xs:boolean" default="false">
+          <xs:annotation>
+            <xs:documentation>Whether statistics are to be gathered for undertow subsystem.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="serverType">
         <xs:sequence>
+            <xs:element name="ajp-listener" type="ajp-listener-type" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="http-listener" type="http-listener-type" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="https-listener" type="https-listener-type" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="ajp-listener" type="ajp-listener-type" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="host" type="hostType" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" use="required" type="xs:string"/>
@@ -95,6 +100,8 @@
                 <xs:attribute name="max-buffered-request-size" type="xs:long" default="16384"/>
                 <xs:attribute name="record-request-start-time" type="xs:boolean" default="false"/>
                 <xs:attribute name="allow-equals-in-cookie-value" type="xs:boolean" default="false"/>
+                <xs:attribute name="no-request-timeout" type="xs:int"/>
+                <xs:attribute name="request-parse-timeout" type="xs:int"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -131,6 +138,15 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="enable-http2" use="optional" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <![CDATA[
+                              Enables HTTP2 upgrade and prior knowledge connections
+                               ]]>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -142,6 +158,8 @@
                 <xs:attribute name="verify-client" use="optional" type="xs:string"/>
                 <xs:attribute name="enabled-cipher-suites" use="optional" type="xs:string"/>
                 <xs:attribute name="enabled-protocols" use="optional" type="xs:string"/>
+                <xs:attribute name="enable-http2" use="optional" type="xs:string"/>
+                <xs:attribute name="enable-spdy" use="optional" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -169,6 +187,7 @@
             <xs:element name="jsp-config" type="jsp-configurationType" maxOccurs="1" minOccurs="0"/>
             <xs:element name="session-cookie" type="session-cookieType" maxOccurs="1" minOccurs="0"/>
             <xs:element name="persistent-sessions" type="persistent-sessionsType" maxOccurs="1" minOccurs="0"/>
+            <xs:element name="websockets" type="websocketsType" maxOccurs="1" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="name" use="required" type="xs:string"/>
         <xs:attribute name="allow-non-standard-wrappers" use="optional" type="xs:boolean" default="false"/>
@@ -179,7 +198,7 @@
         <xs:attribute name="ignore-flush" type="xs:boolean" use="optional" default="false"/>
         <xs:attribute name="eager-filter-initialization" type="xs:boolean" use="optional" default="false"/>
         <xs:attribute name="default-session-timeout" type="xs:integer" use="optional" default="30"/>
-
+        <xs:attribute name="disable-caching-for-secured-pages" type="xs:boolean" use="optional" default="true"/>
     </xs:complexType>
     <xs:complexType name="hostType">
         <xs:sequence>
@@ -191,6 +210,12 @@
         <xs:attribute name="name" use="required" type="xs:string"/>
         <xs:attribute name="alias" use="optional" type="xs:string"/>
         <xs:attribute name="default-web-module" use="optional" type="xs:string" default="ROOT.war"/>
+    </xs:complexType>
+
+    <xs:complexType name="websocketsType">
+        <xs:attribute name="buffer-pool" use="optional" type="xs:string" default="default"/>
+        <xs:attribute name="worker" use="optional" type="xs:string" default="default"/>
+        <xs:attribute name="dispatch-to-worker" use="optional" type="xs:boolean" default="true"/>
     </xs:complexType>
 
     <xs:complexType name="jsp-configurationType">
@@ -252,6 +277,7 @@
             <xs:element name="response-header" type="response-headerType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="gzip" type="gzipType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="error-page" type="errorPageType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="mod-cluster" type="modClusterType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="filter" type="customFilterType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
@@ -309,6 +335,9 @@
         <xs:attribute name="session-cookie-names" use="optional" type="xs:string"/>
         <xs:attribute name="problem-server-retry" use="optional" type="xs:integer"/>
         <xs:attribute name="max-request-time" use="optional" type="xs:integer"/>
+        <xs:attribute name="request-queue-size" use="optional" type="xs:integer"/>
+        <xs:attribute name="cached-connections-per-thread" use="optional" type="xs:integer"/>
+        <xs:attribute name="connection-idle-timeout" use="optional" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="reverse-proxy-hostType">
@@ -420,5 +449,24 @@
 
     <xs:complexType name="gzipType">
         <xs:attribute name="name" use="required" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="modClusterType">
+        <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:attribute name="management-socket-binding" type="xs:string" use="required"/>
+        <xs:attribute name="advertise-socket-binding" type="xs:string" use="required"/>
+        <xs:attribute name="security-key" type="xs:string" use="optional"/>
+        <xs:attribute name="advertise-protocol" type="xs:string" use="optional"/>
+        <xs:attribute name="advertise-path" type="xs:string" use="optional"/>
+        <xs:attribute name="advertise-frequency" type="xs:int" use="optional"/>
+        <xs:attribute name="health-check-interval" type="xs:int" use="optional"/>
+        <xs:attribute name="broken-node-timeout" type="xs:int" use="optional"/>
+        <xs:attribute name="worker" type="xs:string" use="optional" />
+        <xs:attribute name="max-request-time" type="xs:int" use="optional"/>
+        <xs:attribute name="management-access-predicate" type="xs:string" use="optional"/>
+        <xs:attribute name="connections-per-thread" type="xs:int" use="optional" />
+        <xs:attribute name="cached-connections-per-thread" type="xs:int" use="optional" />
+        <xs:attribute name="connection-idle-timeout" type="xs:int" use="optional" />
+        <xs:attribute name="request-queue-size" type="xs:int" use="optional" />
     </xs:complexType>
 </xs:schema>
