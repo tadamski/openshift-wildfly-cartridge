@@ -561,7 +561,7 @@
               ~  Used for IIOP sockets in the standard configuration.
               ~                  To secure JacORB you need to setup SSL 
               -->
-            <inet-address value="${env.OPENSHIFT_WILDFLY_IP}"/>
+            <loopback-address value="${env.OPENSHIFT_WILDFLY_IP}"/>
         </interface>
     </interfaces>
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
